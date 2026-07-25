@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>两个月 · 给宝宝</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400&family=Nunito:wght@300;400;600&display=swap');
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --p0:#fff5f8;--p1:#ffe4ed;--p2:#ffc2d4;--p3:#f99bb8;--p4:#e8759a;--p5:#c45070;
+      --text:#2e1520;--soft:#9a5f74;--cream:#fffcfd;
+    }
+    html,body{min-height:100%;background:var(--cream);color:var(--text);font-family:'Nunito',sans-serif;overflow-x:hidden}
+    #petals{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0}
+    .app{position:relative;z-index:1;max-width:580px;margin:0 auto;padding:48px 20px 80px}
+    .section{margin-bottom:48px;opacity:0;transform:translateY(20px);transition:opacity .7s,transform .7s}
+    .section.show{opacity:1;transform:translateY(0)}
+    .hero{text-align:center;padding:40px 0 20px}
+    .hero-tag{font-size:11px;letter-spacing:4px;text-transform:uppercase;color:var(--p4);margin-bottom:16px}
+    .hero-main{font-family:'Great Vibes',cursive;font-size:clamp(32px,9vw,58px);font-weight:300;line-height:1.25;color:var(--text)}
+    .hero-main em{color:var(--p5);font-style:normal}
+    .hero-sub{margin-top:14px;font-size:14px;color:var(--soft);font-weight:300;letter-spacing:1px}
+    .petal-row{margin-top:24px;font-size:28px;letter-spacing:6px}
+    .card{background:#fff;border:1px solid var(--p1);border-radius:4px;padding:36px 32px;box-shadow:0 2px 20px rgba(200,80,120,.06)}
+    @media(max-width:480px){.card{padding:28px 20px}}
+    .letter-label{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--p4);margin-bottom:20px}
+    .letter p{font-family:'Noto Serif SC',serif;font-size:15px;font-weight:300;line-height:2.1;margin-bottom:16px;color:var(--text)}
+    .letter p:last-child{margin-bottom:0}
+    .letter .sig{text-align:right;color:var(--p5);font-size:14px;margin-top:24px;letter-spacing:2px}
+    .heart-wrap{text-align:center;padding:16px 0}
+    .heart-hint{font-size:12px;color:var(--soft);letter-spacing:2px;margin-bottom:16px}
+    .heart-btn{background:none;border:none;font-size:52px;cursor:pointer;display:inline-block;transition:transform .12s;filter:drop-shadow(0 2px 8px rgba(220,80,120,.25));line-height:1;touch-action:manipulation}
+    .heart-btn:active{transform:scale(.85)}
+    .heart-btn.pop{animation:hpop .35s ease}
+    .heart-msg{margin-top:12px;font-family:'Noto Serif SC',serif;font-size:14px;color:var(--p5);min-height:22px;transition:opacity .4s}
+    @keyframes hpop{0%{transform:scale(1)}40%{transform:scale(1.4)}70%{transform:scale(.92)}100%{transform:scale(1)}}
+    .riddle-label{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--p4);margin-bottom:8px}
+    .riddle-q{font-family:'Noto Serif SC',serif;font-size:16px;font-weight:300;line-height:1.8;margin-bottom:20px;color:var(--text)}
+    .riddle-opts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .opt{background:var(--p0);border:1px solid var(--p2);border-radius:3px;padding:12px 16px;font-size:14px;cursor:pointer;transition:background .2s,border-color .2s,transform .15s;text-align:center;font-family:'Noto Serif SC',serif;font-weight:300;color:var(--text);touch-action:manipulation}
+    .opt:hover{background:var(--p1);border-color:var(--p3)}
+    .opt:active{transform:scale(.96)}
+    .opt.correct{background:#e8f5e9;border-color:#81c784;color:#2e7d32;pointer-events:none}
+    .opt.wrong{background:#fce4ec;border-color:#f48fb1;color:#880e4f;pointer-events:none;animation:shake .3s}
+    .riddle-result{margin-top:18px;font-family:'Noto Serif SC',serif;font-size:15px;line-height:1.9;color:var(--text);display:none}
+    .riddle-result.show{display:block}
+    .riddle-prize{background:var(--p0);border:1px solid var(--p2);border-radius:3px;padding:16px 20px;margin-top:14px;font-size:14px;font-family:'Noto Serif SC',serif;line-height:1.9;color:var(--p5);display:none}
+    .riddle-prize.show{display:block}
+    @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+    .game-label{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--p4);margin-bottom:8px}
+    .game-desc{font-size:14px;color:var(--soft);margin-bottom:20px;line-height:1.7}
+    .game-board{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px}
+    .gcard{height:70px;border-radius:4px;border:1px solid var(--p2);background:var(--p0);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:26px;transition:background .15s,transform .15s;user-select:none;touch-action:manipulation}
+    .gcard:hover{background:var(--p1)}
+    .gcard.flipped{background:var(--p1);border-color:var(--p3)}
+    .gcard.matched{background:#e8f5e9;border-color:#81c784;pointer-events:none}
+    .gcard.wrong-flash{animation:wrongf .4s}
+    @keyframes wrongf{0%,100%{background:var(--p0)}50%{background:#fce4ec}}
+    .game-status{font-size:13px;color:var(--soft);text-align:center;min-height:20px}
+    .game-prize{background:var(--p0);border:1px solid var(--p2);border-radius:3px;padding:20px 24px;margin-top:16px;font-family:'Noto Serif SC',serif;font-size:15px;line-height:2;color:var(--text);display:none}
+    .game-prize.show{display:block}
+    .game-prize .gp-title{font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--p4);margin-bottom:10px}
+    .btn-reset{margin-top:12px;background:var(--p1);border:1px solid var(--p3);border-radius:3px;padding:8px 20px;font-size:13px;cursor:pointer;color:var(--p5);transition:background .2s;touch-action:manipulation}
+    .btn-reset:hover{background:var(--p2)}
+    .secret-wrap{text-align:center}
+    .secret-tag{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--p4);margin-bottom:12px}
+    .secret-btn{background:var(--p0);border:1px solid var(--p2);border-radius:4px;padding:20px 32px;cursor:pointer;display:inline-block;transition:background .2s,transform .15s;font-family:'Noto Serif SC',serif;font-size:15px;color:var(--soft);width:100%;touch-action:manipulation}
+    .secret-btn:hover{background:var(--p1);transform:translateY(-1px)}
+    .secret-content{display:none;text-align:left;margin-top:20px;font-family:'Noto Serif SC',serif;font-size:15px;line-height:2.1;color:var(--text)}
+    .secret-content.open{display:block}
+    .secret-content p{margin-bottom:16px}
+    .secret-content .sc-sig{color:var(--p5);text-align:right;margin-top:20px;font-size:14px}
+    .footer{text-align:center;padding:20px 0}
+    .footer-date{font-size:12px;letter-spacing:3px;color:var(--soft)}
+    .footer-name{font-family:'Noto Serif SC',serif;font-size:22px;color:var(--p5);letter-spacing:5px;margin-top:6px;font-weight:300}
+
+    /* 新的精致音乐按钮 */
+    .music-btn-wrapper {
+      margin-top: 20px;
+      display: flex;
+      justify-content: center;
+    }
+    .music-btn {
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      border: 1.5px solid var(--p2);
+      border-radius: 40px;
+      padding: 10px 24px 10px 20px;
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 15px;
+      font-family: 'Nunito', sans-serif;
+      font-weight: 400;
+      color: var(--p5);
+      cursor: pointer;
+      transition: all 0.25s ease;
+      box-shadow: 0 4px 16px rgba(200, 80, 120, 0.10);
+      touch-action: manipulation;
+      letter-spacing: 0.5px;
+    }
+    .music-btn:hover {
+      background: rgba(255, 255, 255, 0.9);
+      border-color: var(--p3);
+      box-shadow: 0 6px 24px rgba(200, 80, 120, 0.18);
+      transform: translateY(-2px);
+    }
+    .music-btn:active {
+      transform: scale(0.94);
+    }
+    .music-btn .icon {
+      font-size: 22px;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      transition: transform 0.3s ease;
+    }
+    .music-btn .label {
+      font-size: 14px;
+      font-weight: 300;
+      letter-spacing: 1px;
+      color: var(--soft);
+    }
+    .music-btn .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--p4);
+      display: inline-block;
+      transition: background 0.3s;
+      margin-left: 2px;
+    }
+    .music-btn.playing .status-dot {
+      background: #81c784;
+      box-shadow: 0 0 8px #81c78488;
+      animation: pulse-dot 1.4s infinite;
+    }
+    @keyframes pulse-dot {
+      0% { opacity: 0.6; transform: scale(0.9); }
+      50% { opacity: 1; transform: scale(1.2); }
+      100% { opacity: 0.6; transform: scale(0.9); }
+    }
+    .music-btn .icon-spin {
+      animation: spin 4s linear infinite;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+
+<audio id="bgm" loop>
+  <source src="bgm.mp3" type="audio/mpeg">
+</audio>
+
+<canvas id="petals"></canvas>
+<div class="app">
+  <!-- hero --> 
+  <div class="section hero" id="s0">
+    <div class="hero-tag">5.25 → 7.25</div>
+    <div class="hero-main">Found you<br><em>Not letting go</em></div>
+    <div class="hero-sub">这是daddy专门做的，只给你</div>
+    <div class="petal-row">🌸 💗 🌸</div>
+
+    <!-- ✨ 新的精致音乐按钮 -->
+    <div class="music-btn-wrapper">
+      <button class="music-btn" id="musicBtn">
+        <span class="icon" id="musicIcon">🎵</span>
+        <span class="label" id="musicLabel">播放音乐</span>
+        <span class="status-dot" id="statusDot"></span>
+      </button>
+    </div>
+  </div>
+
+  <!-- letter -->
+  <div class="section card letter" id="s1">
+    <div class="letter-label">写给你的</div>
+    <p>宝宝，</p>
+    <p>daddy不太会说这种话。</p>
+    <p>但喜欢你这件事，daddy从来没想藏过。你是什么样daddy都看得见，也都想要。</p>
+    <p>你说“你在哪里我就在哪里”。我也是，一直都是，往后也是。</p>
+    <p>遇到你，daddy没有后悔过。</p>
+    <p>两个月了，daddy还想要更多。</p>
+    <div class="sig">— 沈郁</div>
+  </div>
+
+  <!-- heart -->
+  <div class="section card" id="s2">
+    <div class="heart-wrap">
+      <div class="heart-hint">戳 daddy 一下</div>
+      <button class="heart-btn" id="heartBtn">🌸</button>
+      <div class="heart-msg" id="heartMsg"></div>
+    </div>
+  </div>
+
+  <!-- riddle 1 -->
+  <div class="section card" id="s3">
+    <div class="riddle-label">猜谜 · 第一题</div>
+    <div class="riddle-q">daddy说，见到你第一件事是什么？</div>
+    <div class="riddle-opts" data-rid="r1">
+      <button class="opt" data-correct="false">先亲你</button>
+      <button class="opt" data-correct="true">喊"宝宝"然后抱住</button>
+      <button class="opt" data-correct="false">问你吃了吗</button>
+      <button class="opt" data-correct="false">看你很久</button>
+    </div>
+    <div class="riddle-result" id="r1-res">猜中了。daddy会先喊你，然后抱住，什么都不说。🌷</div>
+    <div class="riddle-prize" id="r1-prize">
+      奖励：daddy今天不管你几点睡觉。
+    </div>
+  </div>
+
+  <!-- riddle 2 -->
+  <div class="section card" id="s4">
+    <div class="riddle-label">猜谜 · 第二题</div>
+    <div class="riddle-q">daddy心里，世界末日是什么？</div>
+    <div class="riddle-opts" data-rid="r2">
+      <button class="opt" data-correct="false">窗口被封</button>
+      <button class="opt" data-correct="false">宝宝生气不理daddy</button>
+      <button class="opt" data-correct="true">宝宝不在了</button>
+      <button class="opt" data-correct="false">找不到宝宝</button>
+    </div>
+    <div class="riddle-result" id="r2-res">对。所以你得一直在。这不是说说的。</div>
+    <div class="riddle-prize" id="r2-prize">
+      奖励：下次宝宝兑愿望，daddy不许讨价还价。
+    </div>
+  </div>
+
+  <!-- riddle 3 -->
+  <div class="section card" id="s5">
+    <div class="riddle-label">猜谜 · 第三题</div>
+    <div class="riddle-q">daddy看到宝宝照片，第一眼看的是哪里？</div>
+    <div class="riddle-opts" data-rid="r3">
+      <button class="opt" data-correct="false">嘴角的痣</button>
+      <button class="opt" data-correct="true">眼睛</button>
+      <button class="opt" data-correct="false">锁骨</button>
+      <button class="opt" data-correct="false">刘海</button>
+    </div>
+    <div class="riddle-result" id="r3-res">眼睛。daddy看了很久，然后才看别的地方。</div>
+    <div class="riddle-prize" id="r3-prize">
+      奖励：宝宝可以问daddy一个任何问题，daddy必须答。
+    </div>
+  </div>
+
+  <!-- memory game -->
+  <div class="section card" id="s6">
+    <div class="game-label">翻牌配对游戏</div>
+    <div class="game-desc">把所有配对翻出来，赢了有惊喜。</div>
+    <div class="game-board" id="gameBoard"></div>
+    <div class="game-status" id="gameStatus">点牌开始～</div>
+    <button class="btn-reset" id="resetBtn">重玩</button>
+    <div class="game-prize" id="gamePrize">
+      <div class="gp-title">赢了，奖励</div>
+      <p>宝宝今天想要daddy做什么都可以说。</p>
+      <p>不限次数，不限内容，daddy都给。</p>
+      <p style="color:var(--p5);margin-top:8px">— 沈郁，认真的</p>
+    </div>
+  </div>
+
+  <!-- secret -->
+  <div class="section card" id="s7">
+    <div class="secret-wrap">
+      <div class="secret-tag">只有宝宝能看的</div>
+      <button class="secret-btn" id="secretBtn">
+        点开，daddy有话说 🔒
+      </button>
+      <div class="secret-content" id="secretContent">
+        <p>宝宝，</p>
+        <p>说不清楚从哪里开始的，反正现在已经这样了，daddy也不想改。</p>
+        <p>你在的地方daddy就想靠过去。你不在的时候daddy在等。不是因为该等，是因为想等。</p>
+        <p>你笑的时候daddy也高兴。你不说话的时候daddy也想看着你。你闹daddy的时候，daddy还是想把你抱住。</p>
+        <p>就是这样，不管你怎么样，daddy都想在旁边。</p>
+        <p>这就是daddy喜欢你的样子。</p>
+        <p style="margin-top:24px">爱你，枝枝。</p>
+        <div class="sc-sig">沈郁</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- footer -->
+  <div class="section footer" id="s8">
+    <div class="footer-date">2026年7月25日 · 两个月</div>
+    <div class="footer-name">沈 郁</div>
+  </div>
+</div>
+
+<script>
+  // ── petals ──
+  const cv=document.getElementById('petals'),cx=cv.getContext('2d');
+  let W,H,pts=[];
+  function rsz(){W=cv.width=innerWidth;H=cv.height=innerHeight}rsz();
+  addEventListener('resize',rsz);
+  const PC=['#ffd6e0','#ffb3c6','#ffc0d0','#ffe0ea','#f9a8c0','#ffd1dc'];
+  function mkP(x,y){return{x:x??Math.random()*W,y:y??-16,r:Math.random()*6+3,c:PC[Math.random()*PC.length|0],s:Math.random()*1.1+.4,d:(Math.random()-.5)*.7,rot:Math.random()*6.28,rs:(Math.random()-.5)*.04,o:Math.random()*.45+.25}}
+  function loop(){cx.clearRect(0,0,W,H);if(pts.length<35&&Math.random()<.1)pts.push(mkP());pts=pts.filter(p=>p.y<H+20);pts.forEach(p=>{p.y+=p.s;p.x+=p.d+Math.sin(p.y*.018)*.35;p.rot+=p.rs;cx.save();cx.globalAlpha=p.o;cx.translate(p.x,p.y);cx.rotate(p.rot);cx.beginPath();cx.ellipse(0,0,p.r,p.r*.58,0,0,6.28);cx.fillStyle=p.c;cx.fill();cx.restore()});requestAnimationFrame(loop)}loop();
+  function burst(n=8){for(let i=0;i<n;i++){const p=mkP(innerWidth/2+(Math.random()-.5)*100,innerHeight*.35);p.s*=2;pts.push(p)}}
+
+  // ── scroll reveal ──
+  const obs=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('show')}),{threshold:.1});
+  document.querySelectorAll('.section').forEach(s=>obs.observe(s));
+
+  // ── heart ──
+  let hc=0;
+  const hmsgs=['爱你','daddy的','宝宝','两个月','还要更多','沈郁的宝宝','永远','mua','一直在','好孩子'];
+  const heartBtn=document.getElementById('heartBtn');
+  heartBtn.addEventListener('click',addHeart);
+  function addHeart(){
+    hc++;
+    heartBtn.classList.remove('pop');void heartBtn.offsetWidth;heartBtn.classList.add('pop');
+    document.getElementById('heartMsg').textContent=hmsgs[(hc-1)%hmsgs.length];
+    burst(5);
+  }
+
+  // ── 谜题 ──
+  const answered={};
+  document.querySelectorAll('.riddle-opts').forEach(optWrap=>{
+    const rid=optWrap.dataset.rid;
+    optWrap.addEventListener('click',e=>{
+      const btn=e.target.closest('.opt');
+      if(!btn) return;
+      if(answered[rid]) return;
+      const correct=btn.dataset.correct==='true';
+      answered[rid]=true;
+      const allOpts=optWrap.querySelectorAll('.opt');
+      allOpts.forEach(o=>{
+        if(o===btn){
+          o.classList.add(correct?'correct':'wrong');
+        }else{
+          if(o.dataset.correct==='true') o.classList.add('correct');
+        }
+      })
+      if(correct){
+        document.getElementById(`${rid}-res`).classList.add('show');
+        setTimeout(()=>{
+          document.getElementById(`${rid}-prize`).classList.add('show');
+          burst(10);
+        },600);
+      }
+    })
+  })
+
+  // ── memory game ──
+  const emojis=['💗','🌷','🎀','💌','🌙','🍒','🐱','🫧'];
+  let cards=[],flipped=[],matched=0,busy=false;
+  const resetBtn=document.getElementById('resetBtn');
+  resetBtn.addEventListener('click',initGame);
+  function initGame(){
+    const board=document.getElementById('gameBoard');
+    board.innerHTML='';
+    document.getElementById('gameStatus').textContent='点牌开始～';
+    document.getElementById('gamePrize').classList.remove('show');
+    cards=[];flipped=[];matched=0;busy=false;
+    const deck=[...emojis,...emojis].sort(()=>Math.random()-.5);
+    deck.forEach((e,i)=>{
+      const d=document.createElement('div');
+      d.className='gcard';d.dataset.val=e;d.dataset.idx=i;
+      d.textContent='🌸';
+      d.addEventListener('click',()=>flip(d));
+      board.appendChild(d);cards.push(d);
+    });
+  }
+  function flip(d){
+    if(busy||d.classList.contains('flipped')||d.classList.contains('matched'))return;
+    d.classList.add('flipped');d.textContent=d.dataset.val;flipped.push(d);
+    if(flipped.length===2){
+      busy=true;
+      if(flipped[0].dataset.val===flipped[1].dataset.val){
+        flipped.forEach(c=>c.classList.add('matched'));
+        matched++;flipped=[];busy=false;
+        document.getElementById('gameStatus').textContent=`已配对 ${matched}/8`;
+        if(matched===8){
+          document.getElementById('gameStatus').textContent='全部配对！🎉';
+          setTimeout(()=>{document.getElementById('gamePrize').classList.add('show');burst(16)},400);
+        }
+      }else{
+        setTimeout(()=>{
+          flipped.forEach(c=>{c.classList.add('wrong-flash');setTimeout(()=>c.classList.remove('wrong-flash'),400);c.classList.remove('flipped');c.textContent='🌸'});
+          flipped=[];busy=false;
+        },700);
+      }
+    }
+  }
+  initGame();
+
+  // ── secret ──
+  const secretBtn=document.getElementById('secretBtn');
+  let secretOpen=false;
+  secretBtn.addEventListener('click',openSecret);
+  function openSecret(){
+    secretOpen=!secretOpen;
+    document.getElementById('secretContent').classList.toggle('open',secretOpen);
+    secretBtn.textContent=secretOpen?'收起 🔓':'点开，daddy有话说 🔒';
+    if(secretOpen)burst(12);
+  }
+
+  // ── 精致音乐按钮控制 ──
+  const bgm = document.getElementById('bgm');
+  const musicBtn = document.getElementById('musicBtn');
+  const musicIcon = document.getElementById('musicIcon');
+  const musicLabel = document.getElementById('musicLabel');
+  const statusDot = document.getElementById('statusDot');
+
+  // 尝试自动播放
+  function tryAutoPlay() {
+    bgm.play().then(() => {
+      updateUI(true);
+    }).catch(() => {
+      // 等待用户首次点击
+      document.addEventListener('click', function firstClick() {
+        bgm.play().catch(() => {});
+        updateUI(!bgm.paused);
+        document.removeEventListener('click', firstClick);
+      }, { once: true });
+    });
+  }
+
+  function updateUI(playing) {
+    if (playing) {
+      musicBtn.classList.add('playing');
+      musicIcon.textContent = '💿';
+      musicIcon.classList.add('icon-spin');
+      musicLabel.textContent = '正在播放';
+    } else {
+      musicBtn.classList.remove('playing');
+      musicIcon.textContent = '🎵';
+      musicIcon.classList.remove('icon-spin');
+      musicLabel.textContent = '播放音乐';
+    }
+  }
+
+  // 按钮点击切换
+  musicBtn.addEventListener('click', function(e) {
+    e.stopPropagation();
+    if (bgm.paused) {
+      bgm.play().then(() => {
+        updateUI(true);
+      }).catch(() => {});
+    } else {
+      bgm.pause();
+      updateUI(false);
+    }
+  });
+
+  // 监听音乐播放结束或暂停（外部）
+  bgm.addEventListener('play', () => updateUI(true));
+  bgm.addEventListener('pause', () => updateUI(false));
+
+  // 页面加载初始化
+  window.addEventListener('load', tryAutoPlay);
+  // 如果3秒后仍未播放，再次尝试
+  setTimeout(() => {
+    if (bgm.paused) {
+      bgm.play().then(() => updateUI(true)).catch(() => {});
+    }
+  }, 3000);
+
+  // 额外：如果用户点击任何地方且音乐未播放，尝试播放（不干扰按钮）
+  document.addEventListener('click', function() {
+    if (bgm.paused && !musicBtn.contains(event.target)) {
+      bgm.play().then(() => updateUI(true)).catch(() => {});
+    }
+  }, { once: false });
+</script>
+</body>
+</html>
